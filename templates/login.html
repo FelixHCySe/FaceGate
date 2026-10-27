@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Anmelden – FaceGate{% endblock %}
+{% block content %}
+<div class="card" style="max-width:380px;margin:60px auto">
+  <h1>FaceGate</h1>
+  {% if no_password %}
+    <p class="err">Es ist noch kein Admin-Passwort gesetzt.</p>
+    <p class="muted">Auf dem Pi ausführen:<br><code>python cli.py set-password</code></p>
+  {% else %}
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <label>Admin-Passwort</label>
+    <input type="password" name="password" autofocus required>
+    <div class="row"><button>Anmelden</button></div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

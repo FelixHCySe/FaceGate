@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row" style="justify-content:space-between;margin:0 0 16px">
+  <h1 style="margin:0">Personen</h1>
+  <a class="btn" href="{{ url_for('person_new') }}">+ Person anlegen</a>
+</div>
+<div class="card">
+  <table>
+    <tr><th>Name</th><th>Alter</th><th>Berechtigungen</th><th>Proben</th><th>Status</th></tr>
+    {% for p in persons %}
+    <tr>
+      <td><a href="{{ url_for('person_edit', person_id=p.id) }}" style="color:inherit">{{ p.name }}</a></td>
+      <td>{{ p.age if p.age is not none else '–' }}</td>
+      <td>{% for t in p.permissions %}<span class="tag {{ 'door' if t == door_permission }}">{{ t }}</span>{% else %}<span class="muted">–</span>{% endfor %}</td>
+      <td class="{{ 'err' if p.samples == 0 }}">{{ p.samples }}</td>
+      <td class="{{ 'ok' if p.active else 'err' }}">{{ 'aktiv' if p.active else 'gesperrt' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="muted">Noch niemand angelegt</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

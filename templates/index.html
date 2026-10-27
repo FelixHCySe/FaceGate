@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid">
+  <div class="card">
+    <img class="live" src="{{ url_for('stream') }}" alt="Live-Bild">
+  </div>
+  <div class="card">
+    <div class="muted">Tür</div>
+    <div id="door" class="status">–</div>
+    <div class="muted" id="fps"></div>
+    <h2>Gerade erkannt</h2>
+    <div id="faces" class="muted">–</div>
+  </div>
+</div>
+
+<h2>Letzte Ereignisse</h2>
+<div class="card">
+  <table>
+    <tr><th>Zeit</th><th>Name</th><th>Zutritt</th><th>Hinweis</th></tr>
+    {% for e in log %}
+    <tr>
+      <td>{{ e.ts.replace('T', ' ') }}</td>
+      <td>{{ e.name }}</td>
+      <td class="{{ 'ok' if e.granted else 'err' }}">{{ 'ja' if e.granted else 'nein' }}</td>
+      <td class="muted">{{ e.note }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="muted">Noch keine Einträge</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<script>
+async function refresh() {
+  try {
+    const r = await fetch("{{ url_for('api_status') }}");
+    if (!r.ok) return;
+    const s = await r.json();
+    const door = document.getElementById("door");
+    door.textContent = s.door_open ? "offen" : "zu";
+    door.className = "status " + (s.door_open ? "ok" : "");
+    document.getElementById("fps").textContent = s.fps + " FPS";
+    const box = document.getElementById("faces");
+    box.innerHTML = "";
+    if (!s.faces.length) { box.textContent = "niemand"; return; }
+    for (const f of s.faces) {
+      const div = document.createElement("div");
+      div.style.marginBottom = "10px";
+      const name = document.createElement("strong");
+      name.textContent = f.name;
+      name.className = f.person_id === null ? "err" : (f.granted ? "ok" : "");
+      div.appendChild(name);
+      const info = document.createElement("div");
+      info.className = "muted";
+      info.textContent = (f.age !== null ? "Alter " + f.age + " · " : "") +
+        (f.permissions.length ? f.permissions.join(", ") : "keine Rechte") +
+        " · " + f.score.toFixed(2);
+      div.appendChild(info);
+      box.appendChild(div);
+    }
+  } catch (e) {}
+}
+refresh(); setInterval(refresh, 1000);
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}FaceGate{% endblock %}</title>
+<style>
+  :root { --bg:#0f1115; --panel:#181b22; --line:#2a2f3a; --text:#e8eaf0; --muted:#8b93a7;
+          --accent:#4f8cff; --ok:#3ecf6e; --warn:#f0a030; --err:#ef5050; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--text); }
+  header { display:flex; align-items:center; gap:24px; padding:12px 20px; border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; }
+  header .brand { font-weight:700; letter-spacing:.5px; }
+  header nav { display:flex; gap:16px; flex:1; }
+  header a { color:var(--muted); text-decoration:none; }
+  header a:hover, header a.active { color:var(--text); }
+  main { max-width:1100px; margin:0 auto; padding:20px 16px; }
+  h1 { font-size:22px; margin:0 0 16px; }
+  h2 { font-size:16px; margin:24px 0 10px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .grid { display:grid; grid-template-columns: 2fr 1fr; gap:16px; }
+  @media (max-width:800px) { .grid { grid-template-columns:1fr; } }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:500; font-size:13px; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:99px; background:#253049; color:#b9cbff; font-size:12px; margin:1px 2px; }
+  .tag.door { background:#1e3a2a; color:#8ff0b0; }
+  .ok { color:var(--ok); } .err { color:var(--err); } .muted { color:var(--muted); }
+  .flash { padding:10px 14px; border-radius:8px; margin-bottom:10px; }
+  .flash.ok { background:#16301f; color:#9af0b8; } .flash.error { background:#3a1818; color:#ffb4b4; }
+  label { display:block; margin:12px 0 4px; color:var(--muted); font-size:13px; }
+  input[type=text], input[type=password], input[type=date], input[type=file] {
+    width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:#0f1218; color:var(--text); font:inherit; }
+  button, .btn { display:inline-block; padding:9px 16px; border-radius:8px; border:0; background:var(--accent); color:#fff; font:inherit; cursor:pointer; text-decoration:none; }
+  button.secondary, .btn.secondary { background:#2a3040; }
+  button.danger { background:#a33; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+  img.live { width:100%; border-radius:8px; background:#000; aspect-ratio:16/9; object-fit:contain; }
+  .status { font-size:28px; font-weight:700; }
+</style>
+</head>
+<body>
+{% if session.admin %}
+<header>
+  <span class="brand">FaceGate</span>
+  <nav>
+    <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint=='index' }}">Live</a>
+    <a href="{{ url_for('persons') }}" class="{{ 'active' if request.endpoint.startswith('person') }}">Personen</a>
+    <a href="{{ url_for('access_log') }}" class="{{ 'active' if request.endpoint=='access_log' }}">Protokoll</a>
+  </nav>
+  <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf" value="{{ csrf_token }}"><button class="secondary">Abmelden</button></form>
+</header>
+{% endif %}
+<main>
+  {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

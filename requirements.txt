@@ -1,0 +1,4 @@
+# picamera2 und gpiozero kommen per apt (siehe README) und werden über
+# --system-site-packages im venv sichtbar. numpy ebenfalls aus apt, damit es zu picamera2 passt.
+opencv-python>=4.9
+flask>=3.0

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ person.name if person else 'Neue Person' }}</h1>
+
+<div class="grid">
+  <div class="card">
+    <form method="post" enctype="multipart/form-data"
+          action="{{ url_for('person_edit', person_id=person.id) if person else url_for('person_new') }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <label>Name</label>
+      <input type="text" name="name" required value="{{ person.name if person else form.get('name', '') }}">
+      <label>Geburtsdatum</label>
+      <input type="date" name="birthdate" value="{{ person.birthdate or '' if person else form.get('birthdate', '') }}">
+      <label>Berechtigungen (kommagetrennt) – „{{ door_permission }}" öffnet die Tür</label>
+      <input type="text" name="permissions" placeholder="{{ door_permission }}, labor, serverraum"
+             value="{{ person.permissions|join(', ') if person else form.get('permissions', '') }}">
+      {% if person %}
+        <label><input type="checkbox" name="active" value="1" {{ 'checked' if person.active }}> aktiv (wird erkannt)</label>
+      {% else %}
+        <label>Fotos (mehrere aus verschiedenen Winkeln = bessere Erkennung)</label>
+        <input type="file" name="photos" accept="image/*" multiple>
+        <label><input type="checkbox" name="from_camera" value="1"> zusätzlich aktuelles Kamerabild verwenden</label>
+      {% endif %}
+      <div class="row"><button>{{ 'Speichern' if person else 'Anlegen' }}</button>
+        <a class="btn secondary" href="{{ url_for('persons') }}">Zurück</a></div>
+    </form>
+  </div>
+
+  {% if person %}
+  <div class="card">
+    <div class="muted">Gesichtsproben</div>
+    <div class="status {{ 'err' if person.samples == 0 }}">{{ person.samples }}</div>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('person_samples', person_id=person.id) }}">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <label>Weitere Fotos hochladen</label>
+      <input type="file" name="photos" accept="image/*" multiple>
+      <label><input type="checkbox" name="from_camera" value="1"> aktuelles Kamerabild verwenden</label>
+      <div class="row"><button class="secondary">Proben hinzufügen</button></div>
+    </form>
+    <form method="post" action="{{ url_for('person_samples', person_id=person.id) }}"
+          onsubmit="return confirm('Alle Gesichtsproben löschen?')">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <input type="hidden" name="reset" value="1">
+      <div class="row"><button class="secondary">Proben zurücksetzen</button></div>
+    </form>
+    <form method="post" action="{{ url_for('person_delete', person_id=person.id) }}"
+          onsubmit="return confirm('Person und alle Gesichtsdaten endgültig löschen?')">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <div class="row"><button class="danger">Person löschen</button></div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

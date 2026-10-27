@@ -1,0 +1,18 @@
+[Unit]
+Description=FaceGate Gesichtserkennung
+After=network-online.target graphical.target
+Wants=network-online.target
+
+[Service]
+# Benutzername und Pfad ggf. anpassen
+User=pi
+WorkingDirectory=/home/pi/facegate
+Environment=DISPLAY=:0
+Environment=PYTHONUNBUFFERED=1
+# Ohne Monitor: --headless anhängen
+ExecStart=/home/pi/facegate/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

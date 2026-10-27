@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row" style="justify-content:space-between;margin:0 0 16px">
+  <h1 style="margin:0">Zugangsprotokoll</h1>
+  <a class="btn secondary" href="{{ url_for('access_log_csv') }}">CSV exportieren</a>
+</div>
+<div class="card">
+  <table>
+    <tr><th>Zeit</th><th>Name</th><th>Ähnlichkeit</th><th>Zutritt</th><th>Hinweis</th></tr>
+    {% for e in log %}
+    <tr>
+      <td>{{ e.ts.replace('T', ' ') }}</td>
+      <td>{{ e.name }}</td>
+      <td class="muted">{{ '%.2f'|format(e.score) if e.score is not none else '–' }}</td>
+      <td class="{{ 'ok' if e.granted else 'err' }}">{{ 'ja' if e.granted else 'nein' }}</td>
+      <td class="muted">{{ e.note }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="muted">Noch keine Einträge</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
