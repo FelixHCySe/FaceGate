@@ -97,7 +97,7 @@ journalctl -u facegate -f                       # Logs ansehen
 | `FACEGATE_CONFIRM_FRAMES` | 4 | Bilder in Folge bis zur Entscheidung |
 | `FACEGATE_UNLOCK_SECONDS` | 5 | wie lange das Relais anzieht |
 | `FACEGATE_RELAY_PIN` | 17 | GPIO (BCM-Nummer) |
-| `FACEGATE_MIN_FACE` | 80 | Mindestgröße eines Gesichts in Pixel |
+| `FACEGATE_MIN_FACE` | 80 | Mindestgröße eines Gesichts in Pixel | 
 | `FACEGATE_DOOR_PERMISSION` | tuer | welches Recht die Tür öffnet |
 | `FACEGATE_LOG_RETENTION_DAYS` | 30 | Protokoll wird danach gelöscht |
 | `FACEGATE_CAMERA` | auto | `picamera`, `usb` oder Pfad zu einem Video (zum Testen am PC) |
